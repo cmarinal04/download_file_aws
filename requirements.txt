@@ -1,0 +1,7 @@
+pyodbc
+pandas
+numpy
+pyopenssl
+cryptography
+pysftp
+boto3
