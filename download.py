@@ -20,22 +20,26 @@ def download_file():
     date_1 = date.strftime(yesterday, '%Y%m%d')
     year = date.strftime(yesterday, '%Y')
     month = date.strftime(yesterday, '%m')
-    file_name = f'MTT_Pagos{date_1}.csv'
+    file_name = f'MTT_Pagos{date_1}.csv' #Acá, agregar ruta donde descargar los archivos.
 
     your_bucket = s3.Bucket(f'paymentgateway-billingsystem-prod')
     your_bucket.download_file(f'CO/outbox/{year}/{month}/{file_name}',file_name)
     # /CO/outbox/{year}/{month}/
-
     # for s3_file in your_bucket.objects.all():
     #     print(s3_file.key) # prints the contents of bucket
-
-    for your_bucket in s3.buckets.all():
-            print(your_bucket.name)
-
-
+    # for your_bucket in s3.buckets.all():
+    #         print(your_bucket.name)
     # s3 = boto3.client ('s3')
-
     # s3.download_file('your_bucket','k.png','/Users/username/Desktop/k.png')
+
+
+
+def read():
+    pass
+
+
+def load():
+    pass
 
 
 
