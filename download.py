@@ -6,6 +6,8 @@ from _class.config import config_session
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from os import remove
+from os import path
 import locale # Idioma "es-CO" (código para el español de Colombia) 
 locale.setlocale(locale.LC_ALL, 'es-CO')
 
@@ -27,6 +29,7 @@ def download_file():
     your_bucket.download_file(f'CO/outbox/{year}/{month}/{file_name}', file_local)
 
     load(file_local)
+    delete_file(file_local)
 
 
     
@@ -41,32 +44,37 @@ def download_file():
 
 
 def read(filename):
-    df = pd.read_csv(f'{filename}', dtype=str)
-    dict_columns = {
-        'Application/Billing System Name': 'Application Billing System Name',
-        'Nombre Columna en Pandas': 'Nombre en la tabla sql'
-    }
-    df.rename(columns={'Application/Billing System Name': 'Application Billing System Name'}, inplace=True)
-    df.fillna('', inplace=True)
-    # breakpoint()
-    return df #.iloc[:10]
+     df = pd.read_csv(f'{filename}', dtype=str)
+     dict_columns = {
+         'Application/Billing System Name': 'Application Billing System Name',
+         'Nombre Columna en Pandas': 'Nombre en la tabla sql'
+     }
+     df.rename(columns={'Application/Billing System Name': 'Application Billing System Name'}, inplace=True)
+     df.fillna('', inplace=True)
+     # breakpoint()
+     return df #.iloc[:10]
 
 
 def load(filename):
-    df_read = read(filename)
-    records = df_read.values.tolist()
-    columns = [f'[{col}]' for col in df_read.columns.tolist()]
-    sql_insert = f'''INSERT INTO [dbo].[MTT_Pagos_Prueba_Test] ({', '.join(columns)})
-              VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-                       ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-                       ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    '''
+     df_read = read(filename)
+     records = df_read.values.tolist()
+     columns = [f'[{col}]' for col in df_read.columns.tolist()]
+     sql_insert = f'''INSERT INTO [dbo].[MTT_Pagos_Prueba_Test] ({', '.join(columns)})
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
+                        ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
+                        ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+     '''
 
    
-    connection = con_sql.connection()
-    cursor = connection.cursor()
-    cursor.executemany(sql_insert,records)
-    connection.commit()
+     connection = con_sql.connection()
+     cursor = connection.cursor()
+     cursor.executemany(sql_insert,records)
+     connection.commit()
+
+def delete_file(filename):
+    if path.exists(filename):
+         remove(filename)
+    print(f'Archivo eliminado')
 
 def main():
     download_file()
