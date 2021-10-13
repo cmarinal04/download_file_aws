@@ -2,3 +2,4 @@ venv/
 database.ini
 _class/config.py
 sql_server_connection.py
+Soporte/
